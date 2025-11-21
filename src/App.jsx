@@ -1,70 +1,46 @@
+import { useMemo, useState } from 'react'
+import Header from './components/Header'
+import QuoteCard from './components/QuoteCard'
+import RoutineEditor from './components/RoutineEditor'
+
 function App() {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
+  // Create a simple stable anonymous client id stored in localStorage
+  const [clientId] = useState(() => {
+    const k = 'morning_client_id'
+    let v = localStorage.getItem(k)
+    if (!v) { v = Math.random().toString(36).slice(2,10); localStorage.setItem(k, v) }
+    return v
+  })
+
+  const [remindersEnabled, setRemindersEnabled] = useState(true)
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.05),transparent_50%)]"></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(59,130,246,0.15),transparent_40%),radial-gradient(circle_at_80%_100%,rgba(16,185,129,0.12),transparent_40%)] pointer-events-none"/>
+      <div className="relative max-w-5xl mx-auto px-4 py-10">
+        <Header
+          remindersEnabled={remindersEnabled}
+          onToggleReminders={() => setRemindersEnabled(v => !v)}
+        />
 
-      <div className="relative min-h-screen flex items-center justify-center p-8">
-        <div className="max-w-2xl w-full">
-          {/* Header with Flames icon */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center mb-6">
-              <img
-                src="/flame-icon.svg"
-                alt="Flames"
-                className="w-24 h-24 drop-shadow-[0_0_25px_rgba(59,130,246,0.5)]"
-              />
-            </div>
-
-            <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-              Flames Blue
-            </h1>
-
-            <p className="text-xl text-blue-200 mb-6">
-              Build applications through conversation
-            </p>
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="md:col-span-2">
+            <QuoteCard backendUrl={backendUrl} />
           </div>
-
-          {/* Instructions */}
-          <div className="bg-slate-800/50 backdrop-blur-sm border border-blue-500/20 rounded-2xl p-8 shadow-xl mb-6">
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                1
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Describe your idea</h3>
-                <p className="text-blue-200/80 text-sm">Use the chat panel on the left to tell the AI what you want to build</p>
-              </div>
+          <div className="md:col-span-1">
+            <div className="rounded-2xl border border-blue-500/20 bg-slate-900/40 p-5">
+              <h3 className="text-blue-100 font-medium mb-2">How it works</h3>
+              <ul className="text-sm text-blue-200/80 space-y-2 list-disc pl-5">
+                <li>Create and customize your morning routine</li>
+                <li>Save it so it stays the same every day</li>
+                <li>Check off tasks as you go</li>
+              </ul>
             </div>
-
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                2
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Watch it build</h3>
-                <p className="text-blue-200/80 text-sm">Your app will appear in this preview as the AI generates the code</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">
-                3
-              </div>
-              <div>
-                <h3 className="font-semibold text-white mb-1">Refine and iterate</h3>
-                <p className="text-blue-200/80 text-sm">Continue the conversation to add features and make changes</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="text-center">
-            <p className="text-sm text-blue-300/60">
-              No coding required • Just describe what you want
-            </p>
           </div>
         </div>
+
+        <RoutineEditor backendUrl={backendUrl} clientId={clientId} />
       </div>
     </div>
   )
